@@ -10,10 +10,6 @@ variable "cl_channel" {
   type = "string"
 }
 
-variable "dns_zone_id" {
-  type = "string"
-}
-
 variable "az_count" {
   type = "string"
 }
@@ -67,10 +63,4 @@ variable "root_volume_iops" {
 variable "sg_ids" {
   type        = "list"
   description = "The security group IDs to be applied."
-}
-
-variable "dns_enabled" {
-  description = "If set to true, DNS records for etcd nodes will be created."
-  type        = "string"
-  default     = "false"
 }

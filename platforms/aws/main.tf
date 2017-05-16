@@ -50,6 +50,26 @@ module "vpc" {
   )}"]
 }
 
+module "dns" {
+  base_domain     = "${var.tectonic_base_domain}"
+  cluster_name    = "${var.tectonic_cluster_name}"
+  custom_dns_name = "${var.tectonic_dns_name}"
+  extra_tags      = "${var.tectonic_aws_extra_tags}"
+  source          = "../../modules/dns/route53"
+  vpc_id          = "${module.vpc.vpc_id}"
+  vpc_public      = "${var.tectonic_aws_external_vpc_public}"
+
+  etcd_ips                = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0 ? module.etcd.private_ips : []}"
+  etcd_external_endpoints = ["${compact(var.tectonic_etcd_servers)}"]
+
+  elb_internal_api_dns_name = "${module.masters.elb_internal_api_dns_name}"
+  elb_internal_api_zone_id  = "${module.masters.elb_internal_api_zone_id}"
+  elb_external_api_dns_name = "${module.masters.elb_external_api_dns_name}"
+  elb_external_api_zone_id  = "${module.masters.elb_external_api_zone_id}"
+  elb_ingress_dns_name      = "${module.masters.elb_ingress_dns_name}"
+  elb_ingress_zone_id       = "${module.masters.elb_ingress_zone_id}"
+}
+
 module "etcd" {
   source = "../../modules/aws/etcd"
 
@@ -64,7 +84,6 @@ module "etcd" {
 
   subnets = ["${module.vpc.worker_subnet_ids}"]
 
-  dns_zone_id  = "${aws_route53_zone.tectonic-int.zone_id}"
   base_domain  = "${var.tectonic_base_domain}"
   cluster_name = "${var.tectonic_cluster_name}"
 
@@ -74,8 +93,6 @@ module "etcd" {
   root_volume_type = "${var.tectonic_aws_etcd_root_volume_type}"
   root_volume_size = "${var.tectonic_aws_etcd_root_volume_size}"
   root_volume_iops = "${var.tectonic_aws_etcd_root_volume_iops}"
-
-  dns_enabled = "${!var.tectonic_experimental && length(compact(var.tectonic_etcd_servers)) == 0}"
 }
 
 module "ignition-masters" {
@@ -109,9 +126,6 @@ module "masters" {
   cl_channel = "${var.tectonic_cl_channel}"
   user_data  = "${module.ignition-masters.ignition}"
 
-  internal_zone_id             = "${aws_route53_zone.tectonic-int.zone_id}"
-  external_zone_id             = "${join("", data.aws_route53_zone.tectonic-ext.*.zone_id)}"
-  base_domain                  = "${var.tectonic_base_domain}"
   public_vpc                   = "${var.tectonic_aws_external_vpc_public}"
   extra_tags                   = "${var.tectonic_aws_extra_tags}"
   autoscaling_group_extra_tags = "${var.tectonic_autoscaling_group_extra_tags}"
