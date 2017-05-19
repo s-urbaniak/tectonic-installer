@@ -32,19 +32,21 @@ resource "aws_autoscaling_group" "masters" {
 
   load_balancers = ["${aws_elb.api-internal.id}", "${join("",aws_elb.api-external.*.id)}", "${aws_elb.console.id}"]
 
-  tag {
-    key                 = "Name"
-    value               = "${var.cluster_name}-master"
-    propagate_at_launch = true
-  }
-
-  tag {
-    key                 = "kubernetes.io/cluster/${var.cluster_name}"
-    value               = "owned"
-    propagate_at_launch = true
-  }
-
-  tags = ["${var.autoscaling_group_extra_tags}"]
+  tags = ["${concat(
+    list(
+      map(
+        "key", "Name",
+        "value", "${var.cluster_name}-master",
+        "propagate_at_launch", true,
+      ),
+      map(
+        "key", "kubernetes.io/cluster/${var.cluster_name}",
+        "value", "owned",
+        "propagate_at_launch", true,
+      ),
+    ),
+    var.autoscaling_group_extra_tags,
+  )}"]
 
   lifecycle {
     create_before_destroy = true
