@@ -11,7 +11,7 @@ data "ignition_config" "main" {
     "${data.ignition_systemd_unit.locksmithd.id}",
     "${data.ignition_systemd_unit.kubelet.id}",
     "${data.ignition_systemd_unit.kubelet-env.id}",
-    "${data.ignition_systemd_unit.init-assets.id}",
+    "${data.ignition_systemd_unit.tectonic-install.id}",
   ]
 }
 
@@ -118,8 +118,16 @@ data "ignition_file" "init-assets" {
   }
 }
 
-data "ignition_systemd_unit" "init-assets" {
-  name    = "init-assets.service"
+data "template_file" "tectonic-install" {
+  template = "${file("${path.module}/resources/services/tectonic-install.service")}"
+
+  vars {
+    vanilla_k8s = "${var.tectonic_service_disabled ? "true" : "false"}"
+  }
+}
+
+data "ignition_systemd_unit" "tectonic-install" {
+  name    = "tectonic-install.service"
   enable  = "${var.assets_s3_location != "" ? true : false}"
-  content = "${file("${path.module}/resources/services/init-assets.service")}"
+  content = "${data.template_file.tectonic-install.rendered}"
 }

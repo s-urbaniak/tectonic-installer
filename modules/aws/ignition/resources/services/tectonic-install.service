@@ -1,0 +1,21 @@
+[Unit]
+Description=Install Tectonic
+ConditionPathExists=!/opt/tectonic/install.done
+Before=kubelet-env.service
+
+[Service]
+Restart=on-failure
+RestartSec=10
+WorkingDirectory=/opt/tectonic
+User=root
+Group=root
+TimeoutSec=infinity
+
+ExecStartPre=/usr/bin/bash /opt/tectonic/init-assets.sh
+ExecStartPre=/usr/bin/bash -c 'if [[ -f /opt/tectonic/bootkube.sh ]]; then source /opt/tectonic/bootkube.sh; else exit 0; fi'
+ExecStartPre=/usr/bin/bash -c 'if [[ ${vanilla_k8s} == false && -f /opt/tectonic/tectonic-rkt.sh ]]; then source /opt/tectonic/tectonic-rkt.sh; else exit 0; fi'
+ExecStart=/bin/touch /opt/tectonic/install.done
+
+[Install]
+WantedBy=multi-user.target
+RequiredBy=kubelet-env.service
