@@ -14,6 +14,14 @@ output "docker_dropin_rendered" {
   value = "${data.template_file.docker_dropin.rendered}"
 }
 
+output "update_ca_certificates_dropin_id" {
+  value = "${data.ignition_systemd_unit.update_ca_certificates_dropin.id}"
+}
+
+output "update_ca_certificates_dropin_rendered" {
+  value = "${data.template_file.update_ca_certificates_dropin.rendered}"
+}
+
 output "kubelet_service_id" {
   value = "${data.ignition_systemd_unit.kubelet.id}"
 }
@@ -48,6 +56,13 @@ output "kubelet_env_id" {
 
 output "kubelet_env_rendered" {
   value = "${data.template_file.kubelet_env.rendered}"
+}
+
+output "ca_cert_pem_id_list" {
+  value = [
+    "${data.ignition_file.kube_ca_cert_pem.id}",
+    "${data.ignition_file.custom_ca_cert_pem.*.id}",
+  ]
 }
 
 output "tx_off_service_id" {

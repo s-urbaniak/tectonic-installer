@@ -55,3 +55,37 @@ resource "aws_s3_bucket_object" "kubeconfig" {
       "tectonicClusterID", "${module.tectonic.cluster_id}"
     ), var.tectonic_aws_extra_tags)}"
 }
+
+# public Kube CA cert
+resource "aws_s3_bucket_object" "kube_ca_cert_pem" {
+  bucket  = "${aws_s3_bucket.tectonic.bucket}"
+  key     = "kube_ca.pem"
+  content = "${module.kube_certs.ca_cert_pem}"
+  acl     = "private"
+
+  server_side_encryption = "AES256"
+
+  tags = "${merge(map(
+      "Name", "${var.tectonic_cluster_name}-kube-ca",
+      "KubernetesCluster", "${var.tectonic_cluster_name}",
+      "tectonicClusterID", "${module.tectonic.cluster_id}"
+    ), var.tectonic_aws_extra_tags)}"
+}
+
+# custom CA certs
+resource "aws_s3_bucket_object" "custom_ca_cert_pem" {
+  count = "${length(var.tectonic_custom_ca_pem_list)}"
+
+  bucket  = "${aws_s3_bucket.tectonic.bucket}"
+  key     = "custom_ca_${count.index}.pem"
+  content = "${var.tectonic_custom_ca_pem_list[count.index]}"
+  acl     = "private"
+
+  server_side_encryption = "AES256"
+
+  tags = "${merge(map(
+      "Name", "${var.tectonic_cluster_name}-custom-ca-${count.index}",
+      "KubernetesCluster", "${var.tectonic_cluster_name}",
+      "tectonicClusterID", "${module.tectonic.cluster_id}"
+    ), var.tectonic_aws_extra_tags)}"
+}

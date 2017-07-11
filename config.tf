@@ -445,3 +445,12 @@ WARNING: Enabling an alpha feature means that future updates may become unsuppor
 This should only be enabled on clusters that are meant to be short-lived to begin validating the alpha feature.
 EOF
 }
+
+variable "tectonic_custom_ca_pem_list" {
+  type    = "list"
+  default = []
+
+  description = <<EOF
+(optional) A list of PEM encoded CA files that will be installed in /etc/ssl/certs on etcd, master, and worker nodes.
+EOF
+}

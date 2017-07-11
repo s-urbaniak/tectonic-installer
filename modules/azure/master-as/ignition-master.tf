@@ -5,6 +5,7 @@ data "ignition_config" "master" {
     "${var.ign_azure_udev_rules_id}",
     "${var.ign_max_user_watches_id}",
     "${data.ignition_file.cloud_provider_config.id}",
+    "${var.ign_kube_ca_id}",
   ]
 
   systemd = ["${compact(list(
@@ -16,6 +17,7 @@ data "ignition_config" "master" {
     var.ign_tectonic_service_id,
     var.ign_bootkube_path_unit_id,
     var.ign_tectonic_path_unit_id,
+    var.ign_update_ca_certificates_dropin_id,
    ))}"]
 
   users = [

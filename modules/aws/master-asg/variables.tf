@@ -70,6 +70,18 @@ variable "ign_s3_puller_id" {
   type = "string"
 }
 
+variable "ign_ca_cert_s3_list" {
+  type = "list"
+}
+
+variable "ign_ca_cert_list_count" {
+  type = "string"
+}
+
+variable "ign_ca_cert_pem_list" {
+  type = "list"
+}
+
 variable "image_re" {
   description = "(internal) Regular expression used to extract repo and tag components from image strings"
   type        = "string"

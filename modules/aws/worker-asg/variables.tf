@@ -82,3 +82,15 @@ variable "ign_s3_puller_id" {
 variable "ign_s3_kubelet_env_service_id" {
   type = "string"
 }
+
+variable "ign_ca_cert_s3_list" {
+  type = "list"
+}
+
+variable "ign_ca_cert_pem_list" {
+  type = "list"
+}
+
+variable "ign_ca_cert_list_count" {
+  type = "string"
+}

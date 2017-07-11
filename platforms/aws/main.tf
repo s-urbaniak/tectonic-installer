@@ -29,10 +29,10 @@ module "vpc" {
   # To enable mode A, configure a set of AZs + CIDRs for masters and workers using the
   # "tectonic_aws_master_custom_subnets" and "tectonic_aws_worker_custom_subnets" variables.
   #
-  # To enable mode B, make sure that "tectonic_aws_master_custom_subnets" and "tectonic_aws_worker_custom_subnets" 
+  # To enable mode B, make sure that "tectonic_aws_master_custom_subnets" and "tectonic_aws_worker_custom_subnets"
   # ARE NOT SET.
 
-  # These counts could be deducted by length(keys(var.tectonic_aws_master_custom_subnets)) 
+  # These counts could be deducted by length(keys(var.tectonic_aws_master_custom_subnets))
   # but there is a restriction on passing computed values as counts. This approach works around that.
   master_az_count = "${length(keys(var.tectonic_aws_master_custom_subnets)) > 0 ? "${length(keys(var.tectonic_aws_master_custom_subnets))}" : "${length(data.aws_availability_zones.azs.names)}"}"
   worker_az_count = "${length(keys(var.tectonic_aws_worker_custom_subnets)) > 0 ? "${length(keys(var.tectonic_aws_worker_custom_subnets))}" : "${length(data.aws_availability_zones.azs.names)}"}"
@@ -40,7 +40,7 @@ module "vpc" {
   # element() won't work on empty lists. See https://github.com/hashicorp/terraform/issues/11210
   master_subnets = "${concat(values(var.tectonic_aws_master_custom_subnets),list("padding"))}"
   worker_subnets = "${concat(values(var.tectonic_aws_worker_custom_subnets),list("padding"))}"
-  # The split() / join() trick works around the limitation of ternary operator expressions 
+  # The split() / join() trick works around the limitation of ternary operator expressions
   # only being able to return strings.
   master_azs = "${ split("|", "${length(keys(var.tectonic_aws_master_custom_subnets))}" > 0 ?
     join("|", keys(var.tectonic_aws_master_custom_subnets)) :
@@ -125,16 +125,28 @@ module "masters" {
   ssh_key                      = "${var.tectonic_aws_ssh_key}"
   subnet_ids                   = "${module.vpc.master_subnet_ids}"
 
-  ign_bootkube_path_unit_id     = "${module.bootkube.systemd_path_unit_id}"
-  ign_bootkube_service_id       = "${module.bootkube.systemd_service_id}"
-  ign_docker_dropin_id          = "${module.ignition_masters.docker_dropin_id}"
-  ign_kubelet_service_id        = "${module.ignition_masters.kubelet_service_id}"
-  ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
-  ign_max_user_watches_id       = "${module.ignition_masters.max_user_watches_id}"
-  ign_s3_kubelet_env_service_id = "${module.ignition_masters.kubelet_env_service_id}"
-  ign_s3_puller_id              = "${module.ignition_masters.s3_puller_id}"
-  ign_tectonic_path_unit_id     = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
-  ign_tectonic_service_id       = "${module.tectonic.systemd_service_id}"
+  ign_ca_cert_s3_list = [
+    "s3://${aws_s3_bucket_object.tectonic_assets.bucket}/${aws_s3_bucket_object.kube_ca_cert_pem.key}",
+    "${formatlist("s3://%s/%s", aws_s3_bucket_object.tectonic_assets.bucket, aws_s3_bucket_object.custom_ca_cert_pem.*.key)}",
+  ]
+
+  ign_ca_cert_pem_list = [
+    "${module.kube_certs.ca_cert_pem}",
+    "${var.tectonic_custom_ca_pem_list}",
+  ]
+
+  ign_bootkube_path_unit_id            = "${module.bootkube.systemd_path_unit_id}"
+  ign_bootkube_service_id              = "${module.bootkube.systemd_service_id}"
+  ign_ca_cert_list_count               = "${length(var.tectonic_custom_ca_pem_list) + 1}"
+  ign_docker_dropin_id                 = "${module.ignition_masters.docker_dropin_id}"
+  ign_kubelet_service_id               = "${module.ignition_masters.kubelet_service_id}"
+  ign_locksmithd_service_id            = "${module.ignition_masters.locksmithd_service_id}"
+  ign_max_user_watches_id              = "${module.ignition_masters.max_user_watches_id}"
+  ign_s3_kubelet_env_service_id        = "${module.ignition_masters.kubelet_env_service_id}"
+  ign_s3_puller_id                     = "${module.ignition_masters.s3_puller_id}"
+  ign_tectonic_path_unit_id            = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
+  ign_tectonic_service_id              = "${module.tectonic.systemd_service_id}"
+  ign_update_ca_certificates_dropin_id = "${module.ignition_masters.update_ca_certificates_dropin_id}"
 }
 
 module "ignition_workers" {
@@ -170,10 +182,22 @@ module "workers" {
   worker_iam_role              = "${var.tectonic_aws_worker_iam_role_name}"
   load_balancers               = ["${var.tectonic_aws_worker_load_balancers}"]
 
-  ign_docker_dropin_id          = "${module.ignition_workers.docker_dropin_id}"
-  ign_kubelet_service_id        = "${module.ignition_workers.kubelet_service_id}"
-  ign_locksmithd_service_id     = "${module.ignition_masters.locksmithd_service_id}"
-  ign_max_user_watches_id       = "${module.ignition_workers.max_user_watches_id}"
-  ign_s3_kubelet_env_service_id = "${module.ignition_workers.kubelet_env_service_id}"
-  ign_s3_puller_id              = "${module.ignition_workers.s3_puller_id}"
+  ign_ca_cert_s3_list = [
+    "s3://${aws_s3_bucket_object.tectonic_assets.bucket}/${aws_s3_bucket_object.kube_ca_cert_pem.key}",
+    "${formatlist("s3://%s/%s", aws_s3_bucket_object.tectonic_assets.bucket, aws_s3_bucket_object.custom_ca_cert_pem.*.key)}",
+  ]
+
+  ign_ca_cert_pem_list = [
+    "${module.kube_certs.ca_cert_pem}",
+    "${var.tectonic_custom_ca_pem_list}",
+  ]
+
+  ign_ca_cert_list_count               = "${length(var.tectonic_custom_ca_pem_list) + 1}"
+  ign_docker_dropin_id                 = "${module.ignition_workers.docker_dropin_id}"
+  ign_kubelet_service_id               = "${module.ignition_workers.kubelet_service_id}"
+  ign_locksmithd_service_id            = "${module.ignition_workers.locksmithd_service_id}"
+  ign_max_user_watches_id              = "${module.ignition_workers.max_user_watches_id}"
+  ign_s3_kubelet_env_service_id        = "${module.ignition_workers.kubelet_env_service_id}"
+  ign_s3_puller_id                     = "${module.ignition_workers.s3_puller_id}"
+  ign_update_ca_certificates_dropin_id = "${module.ignition_workers.update_ca_certificates_dropin_id}"
 }
