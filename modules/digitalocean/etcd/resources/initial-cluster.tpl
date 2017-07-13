@@ -1,0 +1,1 @@
+${etcd_name}=${scheme}://${etcd_address}:2380

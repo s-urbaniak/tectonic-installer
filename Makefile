@@ -91,8 +91,13 @@ docs:
 			'This document gives an overview of variables used in the VMware platform of the Tectonic SDK.', \
 			platforms/vmware/variables.tf)
 
+
 .PHONY: examples
 examples:
+	$(call terraform-docs, Documentation/variables/digitalocean.md, \
+			'This document gives an overview of variables used in the DigitalOcean platform of the Tectonic SDK.', \
+			platforms/vmware/variables.tf)
+
 	$(call terraform-examples, examples/terraform.tfvars.aws, \
 			config.tf, \
 			platforms/aws/variables.tf)
@@ -119,6 +124,11 @@ examples:
 
 .PHONY: clean
 clean: destroy
+	$(call terraform-examples, \
+			examples/terraform.tfvars.digitalocean, \
+			config.tf, \
+			platforms/digitalocean/variables.tf)
+
 	rm -rf $(BUILD_DIR)
 	$(MAKE) clean -C $(TOP_DIR)/installer
 	rm -f $(TF_RC)

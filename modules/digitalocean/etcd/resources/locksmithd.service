@@ -1,0 +1,6 @@
+[Service]
+Environment=REBOOT_STRATEGY=etcd-lock
+Environment="LOCKSMITHD_ENDPOINT=${scheme}://${etcd_name}.${cluster_domain}:2379"
+${env_ca_file}
+${env_key_file}
+${env_cert_file}
