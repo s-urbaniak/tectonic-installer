@@ -173,7 +173,7 @@ spec:
               value: "warning"
             # Don't enable BGP.
             - name: CALICO_NETWORKING_BACKEND
-              value: "none"
+              value: "k8s,bgp"
             # Disable file logging so `kubectl logs` works.
             - name: CALICO_DISABLE_FILE_LOGGING
               value: "true"
@@ -192,6 +192,11 @@ spec:
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP
               value: "always"
+            # Enable IP-in-IP within Felix.
+            - name: FELIX_IPINIPENABLED
+              value: "false"
+            - name: FELIX_HEALTHENABLED
+              value: "false"
             # Set based on the k8s node name.
             - name: NODENAME
               valueFrom:
@@ -230,7 +235,7 @@ spec:
                   fieldPath: spec.nodeName
             # Set list of cni binaries that flannel-cni installs and calico should skip.
             - name: SKIP_CNI_BINARIES
-              value: "bridge,cnitool,dhcp,flannel,host-local,ipvlan,loopback,macvlan,noop,portmap,ptp,tuning"
+              value: "flannel,ipvlan,macvlan"
           volumeMounts:
             - mountPath: /host/opt/cni/bin
               name: host-cni-bin
