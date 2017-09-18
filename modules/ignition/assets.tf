@@ -17,8 +17,8 @@ data "template_file" "docker_dropin" {
 }
 
 data "ignition_systemd_unit" "docker_dropin" {
-  name   = "docker.service"
-  enable = true
+  name    = "docker.service"
+  enabled = true
 
   dropin = [
     {
@@ -44,7 +44,7 @@ data "template_file" "kubelet" {
 
 data "ignition_systemd_unit" "kubelet" {
   name    = "kubelet.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.kubelet.rendered}"
 }
 
@@ -61,7 +61,7 @@ data "template_file" "kubelet_env_service" {
 
 data "ignition_systemd_unit" "kubelet_env" {
   name    = "kubelet-env.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.kubelet_env_service.rendered}"
 }
 
@@ -113,7 +113,7 @@ data "template_file" "tx_off" {
 
 data "ignition_systemd_unit" "tx_off" {
   name    = "tx-off.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.tx_off.rendered}"
 }
 
@@ -136,8 +136,8 @@ data "template_file" "update_ca_certificates_dropin" {
 }
 
 data "ignition_systemd_unit" "update_ca_certificates_dropin" {
-  name   = "update-ca-certificates.service"
-  enable = true
+  name    = "update-ca-certificates.service"
+  enabled = true
 
   dropin = [
     {
