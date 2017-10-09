@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -11,6 +12,14 @@ import (
 	"github.com/coreos/tectonic-installer/installer/pkg/terraform"
 	"github.com/kardianos/osext"
 )
+
+var tfFile = `resource "random_id" "cluster_id" {
+  byte_length = 16
+}
+
+output "id" {
+  value = "${random_id.cluster_id.hex}"
+}`
 
 func newExecutor() (*terraform.Executor, error) {
 	binaryPath, err := osext.ExecutableFolder()
@@ -36,6 +45,11 @@ func newExecutor() (*terraform.Executor, error) {
 		return nil, err
 	}
 
+	err = ioutil.WriteFile(filepath.Join(exPath, "main.tf"), []byte(tfFile), 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	ex, err := terraform.NewExecutor(exPath)
 	if err != nil {
 		return nil, err
@@ -51,6 +65,18 @@ func main() {
 	}
 
 	_, done, err := ex.Execute("init")
+	if err != nil {
+		log.Fatal(err)
+	}
+	<-done
+
+	_, done, err = ex.Execute("plan")
+	if err != nil {
+		log.Fatal(err)
+	}
+	<-done
+
+	_, done, err = ex.Execute("apply")
 	if err != nil {
 		log.Fatal(err)
 	}
