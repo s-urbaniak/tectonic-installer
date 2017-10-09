@@ -252,6 +252,10 @@ func newExecutorFromApplyHandlerInput(input *TerraformApplyHandlerInput) (*terra
 		return nil, newBadRequestError("Could not validate Terraform credentials: %v", err)
 	}
 
+	ex.AddEnvironmentVariables(map[string]string{
+		"TF_LOG": "INFO",
+	})
+
 	return ex, nil
 }
 

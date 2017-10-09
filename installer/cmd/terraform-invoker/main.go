@@ -55,6 +55,10 @@ func newExecutor() (*terraform.Executor, error) {
 		return nil, err
 	}
 
+	ex.AddEnvironmentVariables(map[string]string{
+		"TF_LOG": "INFO",
+	})
+
 	return ex, nil
 }
 
@@ -65,18 +69,6 @@ func main() {
 	}
 
 	_, done, err := ex.Execute("init")
-	if err != nil {
-		log.Fatal(err)
-	}
-	<-done
-
-	_, done, err = ex.Execute("plan")
-	if err != nil {
-		log.Fatal(err)
-	}
-	<-done
-
-	_, done, err = ex.Execute("apply")
 	if err != nil {
 		log.Fatal(err)
 	}
