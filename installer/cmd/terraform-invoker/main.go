@@ -50,7 +50,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	code, done, err := ex.Execute("init")
+	_, done, err := ex.Execute("init")
 	if err != nil {
 		log.Fatal(err)
 	}
