@@ -60,7 +60,7 @@ data "template_file" "etcd" {
 data "ignition_systemd_unit" "etcd" {
   count  = "${var.etcd_count}"
   name   = "etcd-member.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {

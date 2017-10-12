@@ -93,3 +93,15 @@ output "coreos_metadata_dropin_id" {
 output "coreos_metadata_dropin_rendered" {
   value = "${data.template_file.coreos_metadata.rendered}"
 }
+
+output "torcx_file_id" {
+  value = "${data.ignition_file.torcx.id}"
+}
+
+output "docker_profile_id" {
+  value = "${data.ignition_file.docker_profile.id}"
+}
+
+output "next_profile_id" {
+  value = "${data.ignition_file.next_profile.id}"
+}

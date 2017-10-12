@@ -18,7 +18,7 @@ data "template_file" "docker_dropin" {
 
 data "ignition_systemd_unit" "docker_dropin" {
   name   = "docker.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -43,7 +43,7 @@ data "template_file" "kubelet" {
 
 data "ignition_systemd_unit" "kubelet" {
   name    = "kubelet.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.kubelet.rendered}"
 }
 
@@ -62,13 +62,13 @@ data "template_file" "k8s_node_bootstrap" {
 
 data "ignition_systemd_unit" "k8s_node_bootstrap" {
   name    = "k8s-node-bootstrap.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.k8s_node_bootstrap.rendered}"
 }
 
 data "ignition_systemd_unit" "init_assets" {
   name    = "init-assets.service"
-  enable  = "${var.assets_location != "" ? true : false}"
+  enabled = "${var.assets_location != "" ? true : false}"
   content = "${file("${path.module}/resources/services/init-assets.service")}"
 }
 
@@ -134,7 +134,7 @@ data "template_file" "tx_off" {
 
 data "ignition_systemd_unit" "tx_off" {
   name    = "tx-off.service"
-  enable  = true
+  enabled = true
   content = "${data.template_file.tx_off.rendered}"
 }
 
@@ -162,7 +162,7 @@ data "template_file" "coreos_metadata" {
 
 data "ignition_systemd_unit" "coreos_metadata" {
   name   = "coreos-metadata.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {

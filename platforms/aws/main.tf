@@ -147,6 +147,9 @@ module "masters" {
   ign_s3_puller_id                  = "${module.ignition_masters.s3_puller_id}"
   ign_tectonic_path_unit_id         = "${var.tectonic_vanilla_k8s ? "" : module.tectonic.systemd_path_unit_id}"
   ign_tectonic_service_id           = "${module.tectonic.systemd_service_id}"
+  ign_torcx_file_id                 = "${module.ignition_masters.torcx_file_id}"
+  ign_docker_profile_id             = "${module.ignition_masters.docker_profile_id}"
+  ign_next_profile_id               = "${module.ignition_masters.next_profile_id}"
 }
 
 module "ignition_workers" {
@@ -191,4 +194,7 @@ module "workers" {
   ign_locksmithd_service_id         = "${module.ignition_masters.locksmithd_service_id}"
   ign_max_user_watches_id           = "${module.ignition_workers.max_user_watches_id}"
   ign_s3_puller_id                  = "${module.ignition_workers.s3_puller_id}"
+  ign_torcx_file_id                 = "${module.ignition_workers.torcx_file_id}"
+  ign_docker_profile_id             = "${module.ignition_workers.docker_profile_id}"
+  ign_next_profile_id               = "${module.ignition_workers.next_profile_id}"
 }

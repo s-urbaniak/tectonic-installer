@@ -146,3 +146,15 @@ variable "ign_tectonic_service_id" {
 variable "ign_tectonic_path_unit_id" {
   type = "string"
 }
+
+variable "ign_torcx_file_id" {
+  type = "string"
+}
+
+variable "ign_docker_profile_id" {
+  type = "string"
+}
+
+variable "ign_next_profile_id" {
+  type = "string"
+}

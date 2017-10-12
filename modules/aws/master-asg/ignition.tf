@@ -5,6 +5,9 @@ data "ignition_config" "main" {
     "${var.ign_installer_kubelet_env_id}",
     "${var.ign_max_user_watches_id}",
     "${var.ign_s3_puller_id}",
+    "${var.ign_torcx_file_id}",
+    "${var.ign_docker_profile_id}",
+    "${var.ign_next_profile_id}",
   ]
 
   systemd = ["${compact(list(
@@ -54,6 +57,6 @@ data "ignition_file" "init_assets" {
 
 data "ignition_systemd_unit" "init_assets" {
   name    = "init-assets.service"
-  enable  = "${var.assets_s3_location != "" ? true : false}"
+  enabled = "${var.assets_s3_location != "" ? true : false}"
   content = "${file("${path.module}/resources/services/init-assets.service")}"
 }

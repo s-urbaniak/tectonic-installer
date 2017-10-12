@@ -127,7 +127,7 @@ data "ignition_systemd_unit" "locksmithd" {
   count = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
 
   name   = "locksmithd.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {
@@ -148,7 +148,7 @@ EOF
 data "ignition_systemd_unit" "etcd3" {
   count  = "${length(var.external_endpoints) == 0 ? var.instance_count : 0}"
   name   = "etcd-member.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {

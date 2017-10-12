@@ -82,3 +82,15 @@ variable "worker_iam_role" {
 variable "ign_s3_puller_id" {
   type = "string"
 }
+
+variable "ign_torcx_file_id" {
+  type = "string"
+}
+
+variable "ign_docker_profile_id" {
+  type = "string"
+}
+
+variable "ign_next_profile_id" {
+  type = "string"
+}

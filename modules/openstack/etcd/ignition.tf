@@ -120,7 +120,7 @@ data "ignition_systemd_unit" "locksmithd" {
   count = "${var.instance_count}"
 
   name   = "locksmithd.service"
-  enable = true
+  enabled = true
 
   dropin = [
     {

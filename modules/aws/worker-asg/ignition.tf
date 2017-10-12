@@ -3,6 +3,9 @@ data "ignition_config" "main" {
     "${var.ign_installer_kubelet_env_id}",
     "${var.ign_max_user_watches_id}",
     "${var.ign_s3_puller_id}",
+    "${var.ign_torcx_file_id}",
+    "${var.ign_docker_profile_id}",
+    "${var.ign_next_profile_id}",
   ]
 
   systemd = [
