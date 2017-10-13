@@ -82,7 +82,7 @@ variable "tectonic_container_images" {
     tectonic_etcd_operator       = "quay.io/coreos/tectonic-etcd-operator:v0.0.2"
     tectonic_prometheus_operator = "quay.io/coreos/tectonic-prometheus-operator:v1.6.1"
     tectonic_cluo_operator       = "quay.io/coreos/tectonic-cluo-operator:v0.2.1"
-    tectonic_torcx               = "quay.io/coreos/tectonic-torcx:installer-latest"
+    tectonic_torcx               = "quay.io/casey_callendrello/tectonic-torcx:v0.1.2-3-g1128d9e"
   }
 }
 
