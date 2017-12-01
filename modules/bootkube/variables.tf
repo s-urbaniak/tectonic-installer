@@ -177,3 +177,13 @@ variable "versions" {
   description = "Container versions to use"
   type        = "map"
 }
+
+variable "master_ign" {
+  type    = "string"
+  default = ""
+}
+
+variable "worker_ign" {
+  type    = "string"
+  default = ""
+}

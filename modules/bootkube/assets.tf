@@ -66,6 +66,9 @@ resource "template_dir" "bootkube" {
 
     cloud_provider_profile = "${var.cloud_provider != "" ? "${var.cloud_provider}" : "metal"}"
     cloud_config_path      = "${var.cloud_config_path}"
+
+    master_ign = "${base64encode(var.master_ign)}"
+    worker_ign = "${base64encode(var.worker_ign)}"
   }
 }
 
